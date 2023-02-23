@@ -109,10 +109,11 @@ get:
 def autocomplete():
   try:
     ## Authorization check
-    a = auth.authorize(request, APP_SECRET, NONCE, users_collection)
-    if a['error'] == True:
-      ## returning error if authorization fails
-      return message.message_error(a['code'], a['message'], a['err']) 
+
+    # a = auth.authorize(request, APP_SECRET, NONCE, users_collection)
+    # if a['error'] == True:
+    #   ## returning error if authorization fails
+    #   return message.message_error(a['code'], a['message'], a['err']) 
 
     limit = -1
     sort = False
@@ -187,10 +188,11 @@ post:
 def add_keyword_and_cleantext():
   try:
     ## Authorization check
-    a = auth.authorize(request, APP_SECRET, NONCE, users_collection)
-    if a['error'] == True:
-      ## returning error if authorization fails
-      return message.message_error(a['code'], a['message'], a['err']) 
+
+    # a = auth.authorize(request, APP_SECRET, NONCE, users_collection)
+    # if a['error'] == True:
+    #   ## returning error if authorization fails
+    #   return message.message_error(a['code'], a['message'], a['err']) 
 
     spell = False
     ocr = False
@@ -305,10 +307,11 @@ post:
 def search_keywords():
   try:
     ## Authorization check
-    a = auth.authorize(request, APP_SECRET, NONCE, users_collection)
-    if a['error'] == True:
-      ## returning error if authorization fails
-      return message.message_error(a['code'], a['message'], a['err']) 
+
+    # a = auth.authorize(request, APP_SECRET, NONCE, users_collection)
+    # if a['error'] == True:
+    #   ## returning error if authorization fails
+    #   return message.message_error(a['code'], a['message'], a['err']) 
 
     top = 5
     order_matters = True
@@ -478,10 +481,11 @@ post:
 def upload():
   try:
     ## Authorization check
-    a = auth.authorize(request, APP_SECRET, NONCE, users_collection)
-    if a['error'] == True:
-      ## returning error if authorization fails
-      return message.message_error(a['code'], a['message'], a['err']) 
+    
+    # a = auth.authorize(request, APP_SECRET, NONCE, users_collection)
+    # if a['error'] == True:
+    #   ## returning error if authorization fails
+    #   return message.message_error(a['code'], a['message'], a['err']) 
 
     ## Checking if the file is present
     if "user_file" not in request.files:
