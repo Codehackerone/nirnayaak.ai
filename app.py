@@ -514,7 +514,8 @@ def upload():
         ## Getting the file url
         file_url = "https://{}.s3.amazonaws.com/{}".format(bucket_name, file.filename)
         ## Getting the licenseID of the user
-        licenseID = a['licenseID']
+        licenseID = '123456789'
+        #a['licenseID']
         
         document = {
           "licenseID": licenseID,
