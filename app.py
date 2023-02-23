@@ -235,7 +235,8 @@ def add_keyword_and_cleantext():
           pdfReader = PyPDF2.PdfFileReader(io.BytesIO(fs)) 
           for i in range(0,pdfReader.numPages):
             clean_t = clean_t + pdfReader.getPage(i).extractText()
-    except:
+    except Exception as e:
+      print(e)
       ## returning error if the document is not found
       return message.message_error(500, "Error in reading the file", "Internal Server Error")
       
@@ -273,7 +274,7 @@ def add_keyword_and_cleantext():
         "keywords": keys,      
       }
       return message.message_custom(data, 200, "Document updated")    
-    except Exception as e:
+    except Exception as e:      
       return message.message_error(500, e, "Internal Server Error")
   except Exception as e:
     return message.message_error(500, e, "Internal Server Error")
