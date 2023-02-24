@@ -2,3 +2,4 @@
 requirements.txt
 record.log
 r2.txt
+*__pycache__
