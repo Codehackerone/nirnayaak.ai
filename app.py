@@ -37,6 +37,7 @@ import datetime
 import json
 from flask_cors import CORS
 from utils.extract_summary import make_summary
+from utils.gpt_text_generation import get_judgement, get_title_date_parties
 
 ## Getting ENV variables
 load_dotenv()
@@ -265,12 +266,25 @@ def add_keyword_and_cleantext():
     
     ## Summarizing using Cohere
     summary = make_summary(clean_t)
+    
+    ## Extracting title, etc from the document
+    txt = " ".join(clean_t.split(" ")[:300])
+    gpt3_response = get_title_date_parties(txt)
+    # print(gpt3_response)
     try:
       ## Updating the document in the database
       documents_collection.update_one(
         {"_id": ObjectId(id)}, 
         {
-          '$set': {"keywords": keys, "cleanText": clean_t, "summary": summary}
+          '$set': {
+            "keywords": keys, 
+            "cleanText": clean_t, 
+            "summary": summary,
+            "title": gpt3_response["title"] if 'title' in gpt3_response else '',
+            "parties": gpt3_response["parties"] if 'parties' in gpt3_response else '',
+            "court": gpt3_response["court"] if 'court' in gpt3_response else '',
+            "date": gpt3_response["date"] if 'date' in gpt3_response else '',
+            }
         }, 
         upsert= True
       )
@@ -281,12 +295,18 @@ def add_keyword_and_cleantext():
         "ocr": ocr,
         "cleanedText": clean_t,
         "keywords": keys,   
-        "summary": summary   
+        "summary": summary,        
+        "title": gpt3_response["title"] if 'title' in gpt3_response else '',
+        "parties": gpt3_response["parties"] if 'parties' in gpt3_response else '',
+        "court": gpt3_response["court"] if 'court' in gpt3_response else '',
+        "date": gpt3_response["date"] if 'date' in gpt3_response else '',        
       }
       return message.message_custom(data, 200, "Document updated")    
     except Exception as e:      
+      print(e)
       return message.message_error(500, e, "Internal Server Error")
   except Exception as e:
+    print(e)
     return message.message_error(500, e, "Internal Server Error")
 
 
@@ -336,7 +356,15 @@ def search_keywords():
 
     try:
       # added to get keyword from sentence      
-      search_key = keyword_from_search.keyword_from_search_sentence(data["search_key"])
+      if type(data["search_key"]) == str:
+        # get first 300 words        
+        txt = data["search_key"].split()
+        gpt_res = get_judgement(txt)        
+        
+        search_key = keyword_from_search.keyword_from_search_sentence(gpt_res)        
+        print(gpt_res, search_key)
+      else:
+        search_key = keyword_from_search.keyword_from_search_sentence(data["search_key"])
     except Exception as e:             
       print(e)
       return message.message_error(400, "search_key is Required field", "Bad Request")
@@ -406,6 +434,10 @@ def search_keywords():
         "docs": top_n_ranked_final,
         "count": len(top_n_ranked_final)
       }
+      
+      if(gpt_res != None):
+        data["gpt_res"] = gpt_res
+      
       return message.message_custom(data, 200, "Successefully searched with the keyword")
     except Exception as e:
       return message.message_error(500, e, "Internal Server Error")
