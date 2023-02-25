@@ -35,6 +35,7 @@ import auth
 from Crypto.Cipher import AES
 import datetime
 import json
+from flask_cors import CORS
 
 ## Getting ENV variables
 load_dotenv()
@@ -49,12 +50,15 @@ NONCE = os.getenv("NONCE")
 ## Creating Flask app
 app = Flask(__name__) 
 
+## Enabling CORS
+CORS(app)
+
 ## Configuring Logging for the app
 logging.basicConfig(filename='record.log', level=logging.DEBUG, format=f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
 
 ## Connecting to MongoDB
 client = pym.MongoClient(MONGO_URI)
-db = client["test"]
+db = client["diversion"]
 documents_collection = db["documents"]
 users_collection = db["users"]
 
@@ -546,4 +550,4 @@ def upload():
     return message.message_error(500, e, "Internal Server Error")
 
 if __name__ == '__main__':
-  app.run(debug=True)
+  app.run('0.0.0.0',port=5000, debug=True)
