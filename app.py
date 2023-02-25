@@ -27,7 +27,7 @@ import nltk
 from nltk.tokenize import word_tokenize
 from dotenv import load_dotenv
 from time import process_time
-from utils import message
+from utils import message, keyword_from_search
 from helpers import update as helper_update
 from helpers import ranking as helper_ranking
 import logging
@@ -333,8 +333,13 @@ def search_keywords():
       search_key = data["search_key"]  
     except:
       return message.message_error(400, "search_key is Required field", "Bad Request")
-    
-    if 'top' in data:    
+
+    # added to get keyword from sentence
+    config_search = data["search_configuration"]
+    search_key = keyword_from_search.keyword_from_search_sentence(search_key, config_search)
+    # finished
+
+    if 'top' in data:
       top = data["top"]  
     ## checking if order matters is specified
     if 'order_matters' in data and data["order_matters"].lower() == 'false':
