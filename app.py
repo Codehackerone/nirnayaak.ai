@@ -36,6 +36,7 @@ from Crypto.Cipher import AES
 import datetime
 import json
 from flask_cors import CORS
+from utils.extract_summary import make_summary
 
 ## Getting ENV variables
 load_dotenv()
@@ -239,6 +240,7 @@ def add_keyword_and_cleantext():
           pdfReader = PyPDF2.PdfFileReader(io.BytesIO(fs)) 
           for i in range(0,pdfReader.numPages):
             clean_t = clean_t + pdfReader.getPage(i).extractText()
+          clean_t = clean_t.replace("\n", " ")
     except Exception as e:
       print(e)
       ## returning error if the document is not found
@@ -260,12 +262,15 @@ def add_keyword_and_cleantext():
 
     ## Adding the manual and extracted keywords
     keys = keywords_manual + key
+    
+    ## Summarizing using Cohere
+    summary = make_summary(clean_t)
     try:
       ## Updating the document in the database
       documents_collection.update_one(
         {"_id": ObjectId(id)}, 
         {
-          '$set': {"keywords": keys, "cleanText": clean_t}
+          '$set': {"keywords": keys, "cleanText": clean_t, "summary": summary}
         }, 
         upsert= True
       )
@@ -275,7 +280,8 @@ def add_keyword_and_cleantext():
         "spellCheck": spell,
         "ocr": ocr,
         "cleanedText": clean_t,
-        "keywords": keys,      
+        "keywords": keys,   
+        "summary": summary   
       }
       return message.message_custom(data, 200, "Document updated")    
     except Exception as e:      
