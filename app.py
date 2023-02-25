@@ -552,6 +552,7 @@ def upload():
         return message.message_error(400, "File format not supported", "Bad Request")
 
       try:
+        licenseID = str(request.query_string).split("=")[1].split("\'")[0]
         ## Uploading the file to AWS S3 bucket
         s3.upload_fileobj(
           file,
@@ -564,7 +565,8 @@ def upload():
         ## Getting the file url
         file_url = "https://{}.s3.amazonaws.com/{}".format(bucket_name, file.filename)
         ## Getting the licenseID of the user
-        licenseID = '123456789'
+        
+        #licenseID = request.params['licenseID']
         #a['licenseID']
         
         document = {
@@ -587,6 +589,7 @@ def upload():
         }
         return message.message_custom(data, 200, "File uploaded successfully")
       except Exception as e:
+        print(e)
         return message.message_error(500, e, "Internal Server Error")
 
     else:
