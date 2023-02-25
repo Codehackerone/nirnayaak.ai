@@ -6,8 +6,8 @@ def clean_text(txt):
     txt = txt.lower()
     txt = re.sub(r"(@\[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)|^rt|http.+?", "", txt)
     return txt
-def keyword_from_search_sentence(text, type) :
-    if type == "str" :
+def keyword_from_search_sentence(text) :
+    if type(text) == str :
         if len(clean_text(text).split()) == 1 :
             return text
         para = clean_text(text)
