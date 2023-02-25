@@ -354,6 +354,7 @@ def search_keywords():
     # except:
     #   return message.message_error(400, "search_key is Required field", "Bad Request")
 
+    flag_use_gpt = False
     try:
       # added to get keyword from sentence      
       if type(data["search_key"]) == str:
@@ -363,6 +364,7 @@ def search_keywords():
         
         search_key = keyword_from_search.keyword_from_search_sentence(gpt_res)        
         print(gpt_res, search_key)
+        flag_use_gpt = True
       else:
         search_key = keyword_from_search.keyword_from_search_sentence(data["search_key"])
     except Exception as e:             
@@ -435,13 +437,15 @@ def search_keywords():
         "count": len(top_n_ranked_final)
       }
       
-      if(gpt_res != None):
+      if(flag_use_gpt == True):
         data["gpt_res"] = gpt_res
       
       return message.message_custom(data, 200, "Successefully searched with the keyword")
     except Exception as e:
+      print(e)
       return message.message_error(500, e, "Internal Server Error")
   except Exception as e:
+    print(e)
     return message.message_error(500, e, "Internal Server Error")
 
 
