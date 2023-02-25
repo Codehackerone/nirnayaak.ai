@@ -328,16 +328,18 @@ def search_keywords():
     order_matters = True
 
     data = request.json
-    try:
-      ## getting the query parameters
-      search_key = data["search_key"]  
-    except:
-      return message.message_error(400, "search_key is Required field", "Bad Request")
+    # try:
+    #   ## getting the query parameters
+    #   search_key = data["search_key"]  
+    # except:
+    #   return message.message_error(400, "search_key is Required field", "Bad Request")
 
-    # added to get keyword from sentence
-    config_search = data["search_configuration"]
-    search_key = keyword_from_search.keyword_from_search_sentence(search_key, config_search)
-    # finished
+    try:
+      # added to get keyword from sentence      
+      search_key = keyword_from_search.keyword_from_search_sentence(data["search_key"])
+    except Exception as e:             
+      print(e)
+      return message.message_error(400, "search_key is Required field", "Bad Request")
 
     if 'top' in data:
       top = data["top"]  
@@ -346,7 +348,7 @@ def search_keywords():
       order_matters = False
       
     ## Searching for the keywords in the database
-    keywords_dataset_cursor = documents_collection.find({"keywords": { '$exists': True} })
+    keywords_dataset_cursor = documents_collection.find({"keywords": { '$in': search_key} })
     items = list(keywords_dataset_cursor)
 
     ## docs is the dictionary of only keywords with _id as key
