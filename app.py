@@ -601,5 +601,28 @@ def upload():
   except Exception as e:
     return message.message_error(500, e, "Internal Server Error")
 
+## Fetch all the documents of a user by licenseID
+@app.route("/alldocuments", methods=["POST"])
+def all_documents():
+  try:    
+    if not request.json or "licenseID" not in request.json:
+      return message.message_error(400, "licenseID is a Required field", "Bad Request")
+    
+    # only remove _id
+    cursor = documents_collection.find({"licenseID": request.json["licenseID"]} , {"_id": 0})
+    items = list(cursor)
+    
+    if len(items) == 0:
+      return message.message_error(404, "No documents found", "Not Found")
+    
+    data = {};
+    data['docs'] = items
+    
+    return message.message_custom(data, 200, "Docs fetched for licenseID: " + request.json["licenseID"])
+      
+  except Exception as e:
+    print(e)
+    return message.message_error(500, e, "Internal Server Error")
+    
 if __name__ == '__main__':
   app.run('0.0.0.0',port=5000, debug=True)
