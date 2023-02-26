@@ -1,6 +1,6 @@
 # upgraded-umbrella
 
-# eFaisla
+# nirnayaak
 
 eFaisla is a web application that allows users to search for legal cases using keywords and view the results in a user-friendly manner. This is the backend repository for the project. Hosted on AWS EC2 at http://35.90.190.108.
 
