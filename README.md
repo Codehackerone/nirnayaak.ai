@@ -1,5 +1,7 @@
 # nirnayaak
 
+Blog link: https://soumyajitdatta.hashnode.dev/introducing-nirnayaak-the-ai-behind-revolutionary-web-application-simplifying-legal-research
+
 nirnayaak is a web application that allows users to search for legal cases using keywords and view the results in a user-friendly manner. This is the backend repository for the project. Hosted in AWS at ml-backend.nirnayaak.co
 
 ## Getting Started
