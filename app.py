@@ -38,6 +38,7 @@ import json
 from flask_cors import CORS
 from utils.extract_summary import make_summary
 from utils.gpt_text_generation import get_judgement, get_title_date_parties
+import traceback
 
 ## Getting ENV variables
 load_dotenv()
@@ -593,8 +594,8 @@ def upload():
         }
         return message.message_custom(data, 200, "File uploaded successfully")
       except Exception as e:
-        print(e)
-        return message.message_error(500, e, "Internal Server Error")
+        print(traceback.format_exc())        
+        return message.message_error(500, str(e), "Internal Server Error")
 
     else:
       return message.message_error(400, "No file found", "Bad Request")
@@ -615,7 +616,7 @@ def all_documents():
     if len(items) == 0:
       return message.message_error(404, "No documents found", "Not Found")
     
-    data = {};
+    data = {}
     data['docs'] = items
     
     return message.message_custom(data, 200, "Docs fetched for licenseID: " + request.json["licenseID"])
